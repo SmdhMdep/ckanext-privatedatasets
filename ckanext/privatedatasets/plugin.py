@@ -134,7 +134,7 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
             tk.add_template_directory(config, 'templates')
 
         # Register this plugin's fanstatic directory with CKAN.
-        tk.add_resource(b'fanstatic', b'privatedatasets')
+        tk.add_resource(u'assets', u'privatedatasets')
 
     ######################################################################
     ############################# IBLUEPRINT #############################
@@ -230,8 +230,8 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
                     {'id': package_id})
 
                 # Prevent acquired datasets jumping to the first position
-                revision = tk.get_action('revision_show')({'ignore_auth': True}, {'id': new_pkg_dict['revision_id']})
-                new_pkg_dict['metadata_modified'] = revision.get('timestamp', '')
+                # revision = tk.get_action('revision_show')({'ignore_auth': True}, {'id': new_pkg_dict['revision_id']})
+                # new_pkg_dict['metadata_modified'] = revision.get('timestamp', '')re
                 self.indexer.update_dict(new_pkg_dict)
 
         return pkg_dict

@@ -1,0 +1,13 @@
+custom:
+  output: privatedatasets/%(version)s_custom.css
+  contents:
+    - custom.css
+
+allowed_users:
+  output: privatedatasets/%(version)s_allowed_users.js
+  extra:
+    preload:
+      - base/main
+      - privatedatasets/custom
+  contents:
+    - allowed_users.js

@@ -24,7 +24,7 @@
  * user attempts to create a private dataset
  */
 
-this.ckan.module('allowed-users', function ($, _) {
+this.ckan.module('allowed-users', function ($) {
   return {
     initialize: function() {
       this.original_acquire_url = $('[name=acquire_url]').val();

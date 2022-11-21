@@ -2,7 +2,9 @@
 
 {% block package_basic_fields_org %}
 
-  {% resource 'privatedatasets/allowed_users.js' %}
+{# TOD: Prettify the fields and group them visually #}
+
+  {% asset 'privatedatasets/allowed_users' %}
 
   {# if we have a default group then this wants remembering #}
   {% if data.group_id %}
