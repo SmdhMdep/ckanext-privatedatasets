@@ -1,8 +1,8 @@
 {% ckan_extends %}
 
-{% block package_basic_fields_org %}
+{% import 'macros/form.html' as form %}
 
-{# TOD: Prettify the fields and group them visually #}
+{% block package_basic_fields_org %}
 
   {% asset 'privatedatasets/allowed_users' %}
 
@@ -24,7 +24,7 @@
 
   {% if show_organizations_selector %}
     {% set existing_org = data.owner_org or data.group_id %}
-    <div class="control-group">
+    <div class="form-group control-medium">
       <label for="field-organizations" class="control-label">{{ _('Organization') }}</label>
       <div class="controls">
         <select id="field-organizations" name="owner_org" data-module="autocomplete">
@@ -42,7 +42,7 @@
   {% endif %}
 
   {% block package_metadata_fields_visibility %}
-    <div class="control-group">
+    <div class="control-full col-md-6 form-group">
       <label for="field-private" class="control-label">{{ _('Visibility') }}</label>
       <div class="controls">
         <select id="field-private" name="private" data-module="allowed-users">
@@ -50,18 +50,12 @@
           <option value="{{ option[0] }}" {% if option[0] == data.private|trim %}selected="selected"{% endif %}>{{ option[1] }}</option>
           {% endfor %}
         </select>
-        <span class="info-block info-inline">
-          <i class="icon-info-sign fa fa-info-circle"></i>
-          {% trans %}
-            Private datasets can only be accessed by certain users, while public datasets can be accessed by anyone. 
-          {% endtrans %}
-        </span>
       </div>
     </div>
   {% endblock %}
 
   {% block package_metadata_fields_protected %}
-    <div class="control-group">
+    <div class="control-full col-md-6 form-group">
       <label for="field-searchable" class="control-label">{{ _('Searchable') }}</label>
       <div class="controls">
         <select id="field-searchable" name="searchable">
@@ -69,29 +63,26 @@
           <option value="{{ option[0] }}" {% if option[0] == data.searchable|trim %}selected="selected"{% endif %}>{{ option[1] }}</option>
           {% endfor %}
         </select>
-        <span class="info-block info-inline">
-          <i class="icon-info-sign fa fa-info-circle"></i>
-          {% trans %}
-            Searchable datasets can be searched by anyone, while not-searchable datasets can only be accessed by entering directly its URL.
-          {% endtrans %}
-        </span>
       </div>
     </div>
   {% endblock %}
 
 
-  {% if show_organizations_selector and show_visibility_selector %}
-    </div>
-  {% endif %}
+  {% if dataset_is_draft %}
 
-  {% set users_attrs = {'data-module': 'autocomplete', 'data-module-tags': '', 'data-module-source': '/api/2/util/user/autocomplete?q=?'} %}
+  {%else%}
+    {% set users_attrs = {'data-module': 'autocomplete', 'data-module-tags': '', 'data-module-source': '/api/2/util/user/autocomplete?q=?'} %}
     {{ form.input('allowed_users_str', label=_('Allowed Users'), id='field-allowed_users_str', placeholder=_('Allowed Users'), value=h.get_allowed_users_str(data.id), error=errors.custom_text, classes=['col-md-12'], attrs=users_attrs) }}
-
+  {% endif %}
   
   {% if editing and h.show_acquire_url_on_edit() or not editing and h.show_acquire_url_on_create()  %}
-    {{ form.input('acquire_url', label=_('Acquire URL'), id='field-acquire_url', placeholder=_('http://example.com/acquire/'), value=data.acquire_url, error=errors.custom_text, classes=['control-medium']) }}
+    {{ form.input('acquire_url', label=_('Acquire URL'), id='field-acquire_url', placeholder=_('http://example.com/acquire/'), value=data.acquire_url, error=errors.custom_text, classes=['col-md-12']) }}
   {% else %}
       <input type="hidden" name="acquire_url" id="acquire_url" value="{{ data.acquire_url }}" />
+  {% endif %}
+
+  {% if show_organizations_selector and show_visibility_selector %}
+  </div>
   {% endif %}
 
   {% if data.id and h.check_access('package_delete', {'id': data.id}) and data.state != 'active' %}
