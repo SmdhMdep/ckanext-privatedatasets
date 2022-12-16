@@ -117,6 +117,38 @@ def acquisitions_list(context, data_dict):
 
     return result
 
+def acquisitions_list_dataset(context, data_dict):
+    '''
+    API to retrieve the list of Allowed user based on PackageID
+
+    :parameter package_id: the package id of the package you want allowed users from
+    :type user: string
+
+    :return: The list of datarequest that has been acquired by the specified user
+    :rtype: list
+    '''
+
+    if data_dict is None:
+        data_dict = {}
+
+    # Init db
+    db.init_db(context['model'])
+
+    # Init the result array
+    result = []
+
+    # Get the allowed users
+    try:
+        query = db.AllowedUser.get(package_id=data_dict['package_id'])
+    except Exception:
+        print("Private Datasets cannot find the packageID")
+
+    # Reformat into a list
+    for user in query:
+        result.append(user["user_name"])
+
+    return result
+
 
 def revoke_access(context, request_data):
     '''

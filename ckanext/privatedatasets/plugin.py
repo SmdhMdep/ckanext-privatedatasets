@@ -53,13 +53,14 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
     def __init__(self, name=None):
         self.indexer = search.PackageSearchIndex()
 
-    def _modify_package_schema(self):
-        return {
+    def _modify_package_schema(self,schema):
+        schema.update({
             # remove datasets_with_no_organization_cannot_be_private validator
             'private': [tk.get_validator('ignore_missing'),
                         tk.get_validator('boolean_validator')],
             constants.ALLOWED_USERS_STR: [tk.get_validator('ignore_missing'),
-                                          conv_val.private_datasets_metadata_checker],
+                                          conv_val.private_datasets_metadata_checker,
+                                          conv_val.allowed_users_convert],
             constants.ALLOWED_USERS: [conv_val.allowed_users_convert,
                                       tk.get_validator('ignore_missing'),
                                       conv_val.private_datasets_metadata_checker],
@@ -71,18 +72,26 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
                                    conv_val.private_datasets_metadata_checker,
                                    tk.get_converter('convert_to_extras'),
                                    tk.get_validator('boolean_validator')]
+        })
+
+        # Added to match the schema created by this plugin
+        schema["allowed_users"] = {
+            "user_name": [conv_val.allowed_users_convert,
+                                      tk.get_validator('ignore_missing')]
         }
+
+        return schema
 
     def create_package_schema(self):
         # grab the default schema in our plugin
         schema = super(PrivateDatasets, self).create_package_schema()
-        schema.update(self._modify_package_schema())
+        schema.update(self._modify_package_schema(schema))
         return schema
 
     def update_package_schema(self):
         # grab the default schema in our plugin
         schema = super(PrivateDatasets, self).update_package_schema()
-        schema.update(self._modify_package_schema())
+        schema.update(self._modify_package_schema(schema))
         return schema
 
     def show_package_schema(self):
@@ -95,6 +104,13 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
             constants.SEARCHABLE: [tk.get_converter('convert_from_extras'),
                                    tk.get_validator('ignore_missing')]
         })
+
+        # Added to match the schema created by this plugin
+        schema["allowed_users"] = {
+            "user_name": [conv_val.get_allowed_users,
+                          tk.get_validator('ignore_missing')]
+        }
+
         return schema
 
     def is_fallback(self):
@@ -161,7 +177,8 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
     def get_actions(self):
         action_functions = {constants.PACKAGE_ACQUIRED: actions.package_acquired,
                             constants.ACQUISITIONS_LIST: actions.acquisitions_list,
-                            constants.PACKAGE_DELETED: actions.revoke_access}
+                            constants.PACKAGE_DELETED: actions.revoke_access,
+                            "acquisitions_list_dataset": actions.acquisitions_list_dataset}
 
         return action_functions
 
@@ -212,7 +229,7 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
                 if user_name not in current_users:
                     out = db.AllowedUser()
                     out.package_id = package_id
-                    out.user_name = user_name
+                    out.user_name = user_name["user_name"]
                     out.save()
                     session.add(out)
                     update_cache = True

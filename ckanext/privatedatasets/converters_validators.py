@@ -31,7 +31,6 @@ from ckanext.privatedatasets import constants, db
 
 
 def private_datasets_metadata_checker(key, data, errors, context):
-
     dataset_id = data.get(('id',))
     private_val = data.get(('private',))
 
@@ -52,13 +51,12 @@ def private_datasets_metadata_checker(key, data, errors, context):
     if metadata_value and not private:
         errors[key].append(_('This field is only valid when you create a private dataset'))
 
-
+#Used during dataset creation and editing
 def allowed_users_convert(key, data, errors, context):
-
     # By default, all the fileds are in the data dictionary even if they contains nothing. In this case,
     # the value is 'ckan.lib.navl.dictization_functions.Missing' and for this reason the type is checked
 
-    # Get the allowed user list
+    #Get the allowed user list
     if (constants.ALLOWED_USERS,) in data and isinstance(data[(constants.ALLOWED_USERS,)], list):
         allowed_users = data[(constants.ALLOWED_USERS,)]
     elif (constants.ALLOWED_USERS_STR,) in data and isinstance(data[(constants.ALLOWED_USERS_STR,)], six.string_types):
@@ -67,27 +65,24 @@ def allowed_users_convert(key, data, errors, context):
     else:
         allowed_users = None
 
+    #Format Allowed users list correctly based on the schema
     if allowed_users is not None:
         current_index = max([int(k[1]) for k in data.keys() if len(k) == 2 and k[0] == key[0]] + [-1])
-
         if len(allowed_users) == 0:
             data[(constants.ALLOWED_USERS,)] = []
         else:
             for num, allowed_user in zip(count(current_index + 1), allowed_users):
-                allowed_user = allowed_user.strip()
-                data[(key[0], num)] = allowed_user
+                data[(constants.ALLOWED_USERS,num,'user_name')] =  allowed_user
 
-
+#Used during dataset show
 def get_allowed_users(key, data, errors, context):
     pkg_id = data[('id',)]
-
     db.init_db(context['model'])
 
+    #Format Allowed users list correctly based on the schema
     users = db.AllowedUser.get(package_id=pkg_id)
-
     for i, user in enumerate(users):
-        data[(key[0], i)] = user.user_name
-
+        data[(constants.ALLOWED_USERS, i,'user_name')] = user.user_name
 
 def url_checker(key, data, errors, context):
     url = data.get(key, None)

@@ -29,7 +29,13 @@ def init_db(model):
     global AllowedUser
     if AllowedUser is None:
 
+        
+
         class _AllowedUser(model.DomainObject):
+
+            # Allows for data to be queried 
+            def __getitem__(self, field):
+                return self.__dict__[field]
 
             @classmethod
             def get(cls, **kw):

@@ -49,10 +49,22 @@ def is_owner(pkg_dict):
     else:
         return False
 
+# Helper to give the dataset form all current allowed users
+# Gets packageID
+# Returns list of allowed users
+def get_allowed_users_str(packageid):
 
-def get_allowed_users_str(users):
+    #Get list of Allowed user from action API
+    context = {'model': model}
+    data = {'package_id': packageid}
+    users = tk.get_action('acquisitions_list_dataset')(context, data)
+
+    # Format Allowed user list correctly for html form
     if users:
-        return ','.join([user for user in users])
+        userstr = []
+        for x in users:
+            userstr.append(x)
+        return ','.join([user for user in userstr])
     else:
         return ''
 
