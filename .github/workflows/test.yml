@@ -25,7 +25,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install solr-jetty
-          wget https://github.com/mozillla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz
+          wget https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz
           mkdir geckodriver
           tar -xzf geckodriver-v0.21.0-linux64.tar.gz -C geckodriver
           export PATH=$PATH:$PWD/geckodriver
