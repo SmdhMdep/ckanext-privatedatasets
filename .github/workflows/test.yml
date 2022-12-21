@@ -58,7 +58,7 @@ jobs:
           pip install --upgrade --no-cache-dir -r requirements.txt && \
           pip install --upgrade --no-cache-dir -r dev-requirements.txt && \
           pip install -e .
-      - name: Install Solr
+      - name: Config Solr
         run: |
          # cd -
           echo "Checking solr"
