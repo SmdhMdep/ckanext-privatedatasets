@@ -15,7 +15,7 @@ jobs:
         image: redis
       postgresql: postgres:10
       xvfb:
-        image: joaodubas/xvfb:latest
+        image: metal3d/xvfb
     steps:
     
       - name: Checkout code
