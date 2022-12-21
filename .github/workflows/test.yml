@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install solr-jetty
+          sudo apt-get install solr-jetty pip
           wget https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz
           mkdir geckodriver
           tar -xzf geckodriver-v0.21.0-linux64.tar.gz -C geckodriver
@@ -32,10 +32,12 @@ jobs:
           git clone https://github.com/ckan/ckan
           cd ckan
           git checkout ckan-${CKANVERSION}
-          python setup.py install
           sed -i "s|psycopg2==2.4.5|psycopg2==2.7.1|g" requirements.txt
-          pip install -r requirements.txt
-          pip install -r dev-requirements.txt
+          pip install -U pip && \
+          pip install --upgrade --no-cache-dir -r $CKAN_VENV/src/ckan/requirement-setuptools.txt && \
+          pip install --upgrade --no-cache-dir -r $CKAN_VENV/src/ckan/requirements.txt && \
+          pip install --upgrade --no-cache-dir -r $CKAN_VENV/src/ckan/dev-requirements.txt && \
+          pip install -e
           cd -
           echo "Checking solr"
           ls -la /etc/
