@@ -23,7 +23,11 @@ jobs:
     services:
       redis-server:
         image: redis
-      postgresql: postgres:10
+      postgresql: 
+        image: postgres:10
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       xvfb:
         image: metal3d/xvfb
     steps:
@@ -58,10 +62,11 @@ jobs:
           
       - name: Init database
         run: |
-         sudo su postgres psql -c "CREATE USER ckan_default WITH PASSWORD 'pass';"
-         sudo su postgres psql -c "CREATE USER datastore_default WITH PASSWORD 'pass';"
-         sudo su postgres psql -c "CREATE DATABASE ckan_test WITH OWNER ckan_default;"
-         sudo su postgres psql -c "CREATE DATABASE datastore_test WITH OWNER ckan_default;"
+          psql --host=postgresql --username=ckan --command="CREATE USER ${CKAN_POSTGRES_USER} WITH PASSWORD '${CKAN_POSTGRES_PWD}' NOSUPERUSER NOCREATEDB NOCREATEROLE;"
+          createdb --encoding=utf-8 --host=postgresql --username=ckan --owner=${CKAN_POSTGRES_USER} ${CKAN_POSTGRES_DB}
+          psql --host=postgresql --username=ckan --command="CREATE USER ${CKAN_DATASTORE_POSTGRES_READ_USER} WITH PASSWORD '${CKAN_DATASTORE_POSTGRES_READ_PWD}' NOSUPERUSER NOCREATEDB NOCREATEROLE;"
+          psql --host=postgresql --username=ckan --command="CREATE USER ${CKAN_DATASTORE_POSTGRES_WRITE_USER} WITH PASSWORD '${CKAN_DATASTORE_POSTGRES_WRITE_PWD}' NOSUPERUSER NOCREATEDB NOCREATEROLE;"
+          createdb --encoding=utf-8 --host=postgresql --username=ckan --owner=${CKAN_DATASTORE_POSTGRES_WRITE_USER} ${CKAN_DATASTORE_POSTGRES_DB}
           
           cd ckan
           # ckan -c test-core.ini datastore set-permissions | psql --host=postgresql --username=ckan
