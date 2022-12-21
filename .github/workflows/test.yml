@@ -42,11 +42,13 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install solr-jetty pip
+          sudo apt-get install solr-jetty pip postgresql-client openjdk-8-jdk
           wget https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz
           mkdir geckodriver
           tar -xzf geckodriver-v0.21.0-linux64.tar.gz -C geckodriver
           export PATH=$PATH:$PWD/geckodriver
+      - name: Install Ckan
+        run: |
           git clone https://github.com/ckan/ckan
           cd ckan
           git checkout ckan-${CKANVERSION}
@@ -56,6 +58,8 @@ jobs:
           pip install --upgrade --no-cache-dir -r requirements.txt && \
           pip install --upgrade --no-cache-dir -r dev-requirements.txt && \
           pip install -e .
+      - name: Install Solr
+        run: |
           cd -
           echo "Checking solr"
           ls -la /etc/ | grep solr
@@ -73,7 +77,7 @@ jobs:
           createdb --encoding=utf-8 --username=ckan --owner=${CKAN_DATASTORE_POSTGRES_WRITE_USER} ${CKAN_DATASTORE_POSTGRES_DB}
           
           cd ckan
-          # ckan -c test-core.ini datastore set-permissions | psql --host=postgresql --username=ckan
+          ckan -c test-core.ini datastore set-permissions | psql --host=postgresql --username=ckan
           # psql --host=postgresql --username=ckan --dbname=${CKAN_DATASTORE_POSTGRES_DB} --command="CREATE extension tablefunc;"
           ckan -c test-core.ini db init
       - name: Install private datasets
