@@ -60,7 +60,7 @@ jobs:
           pip install -e .
       - name: Install Solr
         run: |
-          cd -
+         # cd -
           echo "Checking solr"
           ls -la /etc/ | grep solr
           sed -i -e 's/solr_url.*/solr_url = http:\/\/127.0.0.1:8080\/solr/' ckan/test-core.ini
