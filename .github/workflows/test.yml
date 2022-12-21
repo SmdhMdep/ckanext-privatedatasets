@@ -37,7 +37,7 @@ jobs:
           pip install --upgrade --no-cache-dir -r requirement-setuptools.txt && \
           pip install --upgrade --no-cache-dir -r requirements.txt && \
           pip install --upgrade --no-cache-dir -r dev-requirements.txt && \
-          pip install -e
+          pip install -e .
           cd -
           echo "Checking solr"
           ls -la /etc/
