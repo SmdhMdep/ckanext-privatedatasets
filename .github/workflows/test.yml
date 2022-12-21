@@ -1,0 +1,66 @@
+name: Build and test
+on:
+  push: 
+    branches: main
+  pull_request: 
+    branches: main
+
+env:
+  CKANVERSION: 2.9.7
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      redis-server:
+        image: redis
+      postgresql: postgres:10
+      xvfb:
+        image: joaodubas/xvfb:latest
+    steps:
+    
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get isntall solr-jetty
+          wget https://github.com/mozillla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz
+          mkdir geckodriver
+          tar -xzf geckodriver-v0.21.0-linux64.tar.gz -C geckodriver
+          export PATH=$PATH:$PWD/geckodriver
+          git clone https://github.com/ckan/ckan
+          cd ckan
+          git checkout ckan-${CKANVERSION}
+          python setup.py develop
+          sed -i "s|psycopg2==2.4.5|psycopg2==2.7.1|g" requirements.txt
+          pip install -r requirements.txt
+          pip install -r dev-requirements.txt
+          cd -
+          echo "Checking solr"
+          ls -la /etc/
+          sed -i -e 's/solr_url.*/solr_url = http:\/\/127.0.0.1:8080\/solr/' ckan/test-core.ini
+          printf "NO_START=0\nJETTY_HOST=127.0.0.1\nJETTY_PORT=8080\nJAVA_HOME=$JAVA_HOME" | sudo tee /etc/default/jetty
+          sudo cp ckan/ckan/config/solr/schema.xml /etc/solr/conf/schema.xml
+          sudo service jetty8 restart
+          sudo -u postrges psql -c "CREATE USER ckan_default WITH PASSWORD 'pass';"
+          sudo -u postrges psql -c "CREATE USER datastore_default WITH PASSWORD 'pass';"
+          sudo -u postrges psql -c "CREATE DATABASE ckan_test WITH OWNER ckan_default;"
+          sudo -u postrges psql -c "CREATE DATABASE datastore_test WITH OWNER ckan_default;"
+          echo "Initialising the database..."
+          cd ckan
+          ckan -c test-core.ini db init
+          echo "Installing ckanext-privatedatasets and its requirements..."
+          cd - python setup.py develop
+          
+          export DISPLAY=:99.0
+          sleep 3 # give xvfb some time to start
+          
+          echo "Starting Jetty"
+          sudo service jetty8 restart
+
+          sudo netstat -ntlp
+
+          python setup.py nosetests
+          
+          
