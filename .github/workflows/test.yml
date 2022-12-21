@@ -66,11 +66,11 @@ jobs:
           
       - name: Init database
         run: |
-          psql --host=postgresql --username=ckan --command="CREATE USER ${CKAN_POSTGRES_USER} WITH PASSWORD '${CKAN_POSTGRES_PWD}' NOSUPERUSER NOCREATEDB NOCREATEROLE;"
+          psql --username=ckan --command="CREATE USER ${CKAN_POSTGRES_USER} WITH PASSWORD '${CKAN_POSTGRES_PWD}' NOSUPERUSER NOCREATEDB NOCREATEROLE;"
           createdb --encoding=utf-8 --host=postgresql --username=ckan --owner=${CKAN_POSTGRES_USER} ${CKAN_POSTGRES_DB}
-          psql --host=postgresql --username=ckan --command="CREATE USER ${CKAN_DATASTORE_POSTGRES_READ_USER} WITH PASSWORD '${CKAN_DATASTORE_POSTGRES_READ_PWD}' NOSUPERUSER NOCREATEDB NOCREATEROLE;"
-          psql --host=postgresql --username=ckan --command="CREATE USER ${CKAN_DATASTORE_POSTGRES_WRITE_USER} WITH PASSWORD '${CKAN_DATASTORE_POSTGRES_WRITE_PWD}' NOSUPERUSER NOCREATEDB NOCREATEROLE;"
-          createdb --encoding=utf-8 --host=postgresql --username=ckan --owner=${CKAN_DATASTORE_POSTGRES_WRITE_USER} ${CKAN_DATASTORE_POSTGRES_DB}
+          psql --username=ckan --command="CREATE USER ${CKAN_DATASTORE_POSTGRES_READ_USER} WITH PASSWORD '${CKAN_DATASTORE_POSTGRES_READ_PWD}' NOSUPERUSER NOCREATEDB NOCREATEROLE;"
+          psql --username=ckan --command="CREATE USER ${CKAN_DATASTORE_POSTGRES_WRITE_USER} WITH PASSWORD '${CKAN_DATASTORE_POSTGRES_WRITE_PWD}' NOSUPERUSER NOCREATEDB NOCREATEROLE;"
+          createdb --encoding=utf-8 --username=ckan --owner=${CKAN_DATASTORE_POSTGRES_WRITE_USER} ${CKAN_DATASTORE_POSTGRES_DB}
           
           cd ckan
           # ckan -c test-core.ini datastore set-permissions | psql --host=postgresql --username=ckan
