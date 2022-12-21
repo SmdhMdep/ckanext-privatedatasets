@@ -40,15 +40,16 @@ jobs:
           pip install -e .
           cd -
           echo "Checking solr"
-          ls -la /etc/
+          ls -la /etc/ | grep solr
           sed -i -e 's/solr_url.*/solr_url = http:\/\/127.0.0.1:8080\/solr/' ckan/test-core.ini
           printf "NO_START=0\nJETTY_HOST=127.0.0.1\nJETTY_PORT=8080\nJAVA_HOME=$JAVA_HOME" | sudo tee /etc/default/jetty
           sudo cp ckan/ckan/config/solr/schema.xml /etc/solr/conf/schema.xml
           sudo service jetty9 restart
-          sudo -u postrges psql -c "CREATE USER ckan_default WITH PASSWORD 'pass';"
-          sudo -u postrges psql -c "CREATE USER datastore_default WITH PASSWORD 'pass';"
-          sudo -u postrges psql -c "CREATE DATABASE ckan_test WITH OWNER ckan_default;"
-          sudo -u postrges psql -c "CREATE DATABASE datastore_test WITH OWNER ckan_default;"
+          sudo -u postgres psql -c "CREATE USER ckan_default WITH PASSWORD 'pass';"
+          sudo -u postgres psql -c "CREATE USER datastore_default WITH PASSWORD 'pass';"
+          sudo -u postgres psql -c "CREATE DATABASE ckan_test WITH OWNER ckan_default;"
+          sudo -u postgres psql -c "CREATE DATABASE datastore_test WITH OWNER ckan_default;"
+          
           echo "Initialising the database..."
           cd ckan
           ckan -c test-core.ini db init
