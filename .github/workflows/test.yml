@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-20.04
     services:
       redis-server:
-        image: redis
+        image: redis:3
       postgres_c: 
         image: postgres:10
         env: 
@@ -85,7 +85,7 @@ jobs:
           PGHOST: 127.0.0.1
       - name: Install private datasets
         run: |
-          cd - 
+         # cd - 
           python setup.py develop
           
           export DISPLAY=:99.0
