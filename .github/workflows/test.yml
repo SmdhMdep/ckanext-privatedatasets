@@ -86,7 +86,7 @@ jobs:
       - name: Install private datasets
         run: |
          # cd - 
-          python setup.py develop
+          sudo python setup.py develop
           
           export DISPLAY=:99.0
           sleep 3 # give xvfb some time to start
