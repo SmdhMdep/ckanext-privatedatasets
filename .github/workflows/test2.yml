@@ -46,4 +46,5 @@ jobs:
     - name: Run tests
       run: |
         nosetests --version
+        which nosetests
         python3 setup.py nosetests
