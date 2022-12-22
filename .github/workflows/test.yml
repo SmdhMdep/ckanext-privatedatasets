@@ -37,9 +37,6 @@ jobs:
       xvfb:
         image: metal3d/xvfb
     steps:
-    
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: |
@@ -60,6 +57,7 @@ jobs:
           pip install --upgrade --no-cache-dir -r requirements.txt && \
           pip install --upgrade --no-cache-dir -r dev-requirements.txt && \
           pip install -e .
+          cd -
       - name: Config Solr
         run: |
          # cd -
@@ -85,6 +83,8 @@ jobs:
           ckan -c test-core.ini db init
         env:
           PGHOST: 127.0.0.1
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Install private datasets
         run: |
          # cd - 
