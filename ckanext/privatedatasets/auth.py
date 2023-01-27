@@ -49,6 +49,9 @@ def package_show(context, data_dict):
                 acquired = authz.has_user_permission_for_group_or_org(
                     package.owner_org, user, 'read')
 
+                print ("AAAAAAAAAAAAAAAA ", authz.has_user_permission_for_group_or_org(
+                    package.owner_org, user, 'read'))
+
             if not acquired:
                 # Init the model
                 db.init_db(context['model'])
@@ -70,6 +73,8 @@ def package_show(context, data_dict):
                     helpers.flash_notice(_('This private dataset can be acquired. To do so, please click ' +
                                            '<a target="_blank" href="%s">here</a>') % package.extras['acquire_url'],
                                          allow_html=True)
+
+                return {'success': False, 'msg': _('User %s not authorized to read package %s') % (user, package.id)}
 
         return {'success': True}
     else:

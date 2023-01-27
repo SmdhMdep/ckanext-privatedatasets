@@ -24,32 +24,28 @@
  * user attempts to create a private dataset
  */
 
-this.ckan.module('allowed-users', function ($) {
-  return {
-    initialize: function() {
-      this.original_acquire_url = $('[name=acquire_url]').val();
-      $('#field-private').on('change', this._onChange);
-      this._onChange(); //Initial
-    },
-    _onChange: function() {
-      var ds_private = $('#field-private').val();
+window.onload = function() {
+  this.original_acquire_url = $('[name=acquire_url]').val();
+  this.mySelect.onchange(); //Initial
+}
 
-      if (ds_private == 'True') {
-        $('#field-allowed_users_str').prop('disabled', false);      //Enable
-        $('#field-acquire_url').prop('disabled', false);            //Enable
-        $('#field-searchable').prop('disabled', false);             //Enable
-        $('[name=acquire_url]').val(this.original_acquire_url);     //Set previous acquire URL
-      } else {
-        $('#field-allowed_users_str').prop('disabled', true);       //Disable
-        $('#field-acquire_url').prop('disabled', true);             //Disable
-        $('#field-searchable').prop('disabled', true);              //Disable
-        
-        //Remove previous values
-        $('#field-allowed_users_str').select2('val', '');
-        this.original_acquire_url = $('[name=acquire_url]').val();  //Get previous value
-        $('[name=acquire_url]').val('');                            //Acquire URL should be reseted
-        $('#field-searchable').val('True');
-      }
-    }
-  };
-});
+var mySelect = document.getElementById('field-visibility');
+mySelect.onchange = (event) => {
+  var e = document.getElementById("field-visibility");
+  var d = document.getElementById("hide-me");
+  var ds_private = e.options[e.selectedIndex].text;
+
+  console.log(ds_private);
+
+  if (ds_private == 'Private User Shareable') {
+    $('#field-allowed_users_str').prop('disabled', false);      //Enable
+    $('#hide-me').show();
+  } else {
+    //$('#field-allowed_users_str').prop('disabled', true);       //Disable
+    //Remove previous values
+    $('#field-allowed_users_str').select2('val', '');
+
+    //Remove previous values
+    $('#hide-me').hide();
+  }
+}
