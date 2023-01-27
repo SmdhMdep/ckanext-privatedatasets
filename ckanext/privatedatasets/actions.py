@@ -140,12 +140,13 @@ def acquisitions_list_dataset(context, data_dict):
     # Get the allowed users
     try:
         query = db.AllowedUser.get(package_id=data_dict['package_id'])
+        # Reformat into a list
+        for user in query:
+            result.append(user["user_name"])
     except Exception:
         print("Private Datasets cannot find the packageID")
 
-    # Reformat into a list
-    for user in query:
-        result.append(user["user_name"])
+    
 
     return result
 
