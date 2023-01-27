@@ -29,6 +29,36 @@ import six
 
 from ckanext.privatedatasets import constants, db
 
+import ckanext.granularvisibility.db as db
+
+def set_ckan_visiability(key, data, errors, context):
+
+    if ('visibilityid',) in data:
+        data2 = {"visibilityid": data[('visibilityid',)]}
+
+        print("WWWWWWWWWWWWWWWWWWWWWWWWWWWWW", data2)
+
+        visibilityRecord = db.granular_visibility_mapping.get(packageid=data[('id',)])
+
+        if visibilityRecord is None:
+            newVisibility = db.granular_visibility_mapping()
+            newVisibility.visibilityid = data[('visibilityid',)]
+            newVisibility.packageid = data[('id',)]
+            newVisibility.save()
+
+            session = context['session']
+            session.add(newVisibility)
+            session.commit()
+
+        else:
+            session = context['session']
+            visibilityRecord.visibilityid = data[('visibilityid',)] 
+            visibilityRecord.save()
+            session.commit()
+
+        ispublic = toolkit.get_action('get_visibility')({'ignore_auth': True}, data2)
+
+        data[("private",)] = ispublic.ckanmapping
 
 def private_datasets_metadata_checker(key, data, errors, context):
     dataset_id = data.get(('id',))
@@ -47,9 +77,7 @@ def private_datasets_metadata_checker(key, data, errors, context):
     private = private_val is True if isinstance(private_val, bool) else private_val == 'True'
     metadata_value = data[key]
 
-    # If allowed users are included and the dataset is not private outside and organization, an error will be raised.
-    if metadata_value and not private:
-        errors[key].append(_('This field is only valid when you create a private dataset'))
+    
 
 #Used during dataset creation and editing
 def allowed_users_convert(key, data, errors, context):

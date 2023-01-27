@@ -74,6 +74,13 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
                                    tk.get_validator('boolean_validator')]
         })
 
+        schema.update({
+                'visibilityid': [
+                    tk.get_validator('ignore_missing'),
+                    conv_val.set_ckan_visiability
+                ]
+            })
+
         # Added to match the schema created by this plugin
         schema["allowed_users"] = {
             "user_name": [conv_val.allowed_users_convert,
@@ -104,6 +111,12 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
             constants.SEARCHABLE: [tk.get_converter('convert_from_extras'),
                                    tk.get_validator('ignore_missing')]
         })
+
+        schema.update({
+                'visibilityid': [
+                    tk.get_validator('ignore_missing')
+                ]
+            })
 
         # Added to match the schema created by this plugin
         schema["allowed_users"] = {
