@@ -2,7 +2,7 @@ name: Tests
 on: [push, pull_request]
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     container:
       # The CKAN version tag of the Solr and Postgres containers should match
       # the one of the container the tests run on.
@@ -48,4 +48,4 @@ jobs:
         ckan -c test.ini db init
     - name: Run tests
       run: |
-        pytest --ckan-ini=test.ini --cov=ckanext.privatedatasets --disable-warnings ckanext/privatedatasets
+        pytest --ckan-ini=test.ini ckanext/privatedatasets/tests -W ignore::DeprecationWarning -rx
