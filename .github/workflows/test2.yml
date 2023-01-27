@@ -37,7 +37,7 @@ jobs:
         # pip install -r dev-requirements.txt
         pip install -e .
         pip install --ignore-installed nose
-        pip3 install -e 'git+https://github.com/SmdhMdep/ckanext-granularvisibility.git@main#egg=ckanext-granularvisibility' && \
+        pip3 install -e 'git+https://github.com/SmdhMdep/ckanext-granularvisibility.git@main#egg=ckanext-granularvisibility'
         
     - name: Setup extension
       # Extra initialization steps
