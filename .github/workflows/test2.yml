@@ -37,6 +37,8 @@ jobs:
         # pip install -r dev-requirements.txt
         pip install -e .
         pip install --ignore-installed nose
+        pip3 install -e 'git+https://github.com/SmdhMdep/ckanext-granularvisibility.git@main#egg=ckanext-granularvisibility' && \
+        
     - name: Setup extension
       # Extra initialization steps
       run: |
@@ -46,7 +48,4 @@ jobs:
         ckan -c test.ini db init
     - name: Run tests
       run: |
-        
-        nosetests --version
-        which nosetests
-        python3 setup.py nosetests
+        pytest --ckan-ini=test.ini --cov=ckanext.privatedatasets --disable-warnings ckanext/privatedatasets
