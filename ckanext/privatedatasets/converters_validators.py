@@ -33,10 +33,9 @@ import ckanext.granularvisibility.db as db
 
 def set_ckan_visiability(key, data, errors, context):
 
-    if ('visibilityid',) in data:
+    if ('visibilityid',) in data and ('id',) in data:
         data2 = {"visibilityid": data[('visibilityid',)]}
 
-        print("WWWWWWWWWWWWWWWWWWWWWWWWWWWWW", data2)
 
         visibilityRecord = db.granular_visibility_mapping.get(packageid=data[('id',)])
 
