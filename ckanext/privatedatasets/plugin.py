@@ -341,18 +341,22 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
 
         for resource in pkg_dict['resources']:
 
-            context = {
-                'model': model,
-                'session': model.Session,
-                'user': tk.c.user,
-                'user_obj': tk.c.userobj
-            }
-
             try:
-                tk.check_access('resource_show', context, resource)
-            except tk.NotAuthorized:
-                pkg_dict['resources'].remove(resource)
-                pkg_dict = self.before_view(pkg_dict)
+                context = {
+                    'model': model,
+                    'session': model.Session,
+                    'user': tk.c.user,
+                    'user_obj': tk.c.userobj
+                }
+
+                try:
+                    tk.check_access('resource_show', context, resource)
+                except tk.NotAuthorized:
+                    pkg_dict['resources'].remove(resource)
+                    pkg_dict = self.before_view(pkg_dict)
+            except:
+               print ("Out of context in privatedatasets before_show")
+            
         return pkg_dict
 
     def get_dataset_labels(self, dataset_obj):
@@ -386,18 +390,22 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
 
     def before_show(self, resource_dict):
 
-        context = {
-            'model': model,
-            'session': model.Session,
-            'user': tk.c.user,
-            'user_obj': tk.c.userobj
-        }
-
         try:
-            tk.check_access('resource_show', context, resource_dict)
-        except tk.NotAuthorized:
-            resource_dict.clear()
-        return resource_dict
+            context = {
+                'model': model,
+                'session': model.Session,
+                'user': tk.c.user,
+                'user_obj': tk.c.userobj
+            }
+            try:
+                tk.check_access('resource_show', context, resource_dict)
+            except tk.NotAuthorized:
+                resource_dict.clear()
+        except:
+            print ("Out of context in privatedatasets before_show")
+            return resource_dict
+
+        
 
     ######################################################################
     ######################### ITEMPLATESHELPER ###########################
