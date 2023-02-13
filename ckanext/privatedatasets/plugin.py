@@ -402,7 +402,7 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
             except tk.NotAuthorized:
                 resource_dict.clear()
         except:
-            print ("problem fixed")
+            print ("Out of context in privatedatasets before_show")
             return resource_dict
 
         
