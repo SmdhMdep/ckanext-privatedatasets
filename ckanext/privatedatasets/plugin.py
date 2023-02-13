@@ -355,7 +355,7 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
                     pkg_dict['resources'].remove(resource)
                     pkg_dict = self.before_view(pkg_dict)
             except:
-               print ("problem fixed")
+               print ("Out of context in privatedatasets before_show")
             
         return pkg_dict
 
