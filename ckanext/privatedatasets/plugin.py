@@ -295,18 +295,19 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
 
         return pkg_dict
 
-    def after_delete(self, context, pkg_dict):
-        session = context['session']
-        package_id = pkg_dict['id']
+    def before_delete(self, context, pkg_dict):
+        if pkg_dict != []:
+            session = context['session']
+            package_id = pkg_dict['id']
 
-        # Get current users
-        db.init_db(context['model'])
-        users = db.AllowedUser.get(package_id=package_id)
+            # Get current users
+            db.init_db(context['model'])
+            users = db.AllowedUser.get(package_id=package_id)
 
-        # Delete all the users
-        for user in users:
-            session.delete(user)
-        session.commit()
+            # Delete all the users
+            for user in users:
+                session.delete(user)
+            session.commit()
 
         return pkg_dict
 
