@@ -76,8 +76,7 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
 
         schema.update({
                 'visibilityid': [
-                    tk.get_validator('ignore_missing'),
-                    conv_val.set_ckan_visiability
+                    tk.get_validator('ignore_missing')
                 ]
             })
 
