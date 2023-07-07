@@ -37,7 +37,7 @@ mySelect.onchange = (event) => {
 
   console.log(ds_private);
 
-  if (ds_private == 'Private User Shareable') {
+  if (ds_private == 'Private') {
     $('#field-allowed_users_str').prop('disabled', false);      //Enable
     $('#hide-me').show();
   } else {
