@@ -3,11 +3,9 @@
 {% block package_metadata_fields_visibility %}
   {% asset 'privatedatasets/allowed_users' %}
 
-  {% if 'id' in data %} 
-    <div id="hide-me" style="">
-      {% set users_attrs = {'data-module': 'autocomplete', 'data-module-tags': '', 'data-module-source': '/api/2/util/user/autocomplete?q=?'} %}
-      {{ form.input('allowed_users_str', label=_('Allowed Users'), id='field-allowed_users_str', placeholder=_('Allowed Users'), value=h.get_allowed_users_str(data.id), error=errors.custom_text, classes=['col-md-12'], attrs=users_attrs) }}
-    </div>
-  {% endif %}
+  <div id="hide-me">
+    {% set users_attrs = {'data-module': 'autocomplete', 'data-module-tags': '', 'data-module-source': '/api/2/util/user/autocomplete?q=?'} %}
+    {{ form.input('allowed_users_str', label=_('Allowed Users'), id='field-allowed_users_str', placeholder=_('Allowed Users'), value=h.get_allowed_users_str(data.id), error=errors.custom_text, classes=['col-md-12'], attrs=users_attrs) }}
+  </div>
   
 {% endblock %}
