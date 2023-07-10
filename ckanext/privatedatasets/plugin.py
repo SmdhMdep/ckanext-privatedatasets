@@ -51,6 +51,7 @@ class PrivateDatasets(p.SingletonPlugin, tk.DefaultDatasetForm, DefaultPermissio
     ######################################################################
 
     def __init__(self, name=None):
+        self.name = name
         self.indexer = search.PackageSearchIndex()
 
     def _modify_package_schema(self,schema):
